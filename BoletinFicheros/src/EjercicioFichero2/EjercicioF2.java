@@ -1,0 +1,39 @@
+package EjercicioFichero2;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
+
+public class EjercicioF2 {
+    public static void main(String[] args) {
+        //IO
+        try (BufferedReader inFile = new BufferedReader(new FileReader(".\\src\\EjercicioFichero2\\FicheroEjer2.txt"))) {
+            String line;
+            StringBuilder info = new StringBuilder();
+            while ((line = inFile.readLine()) != null) {
+                info.append(line).append(" ");
+            }
+            System.out.println(info);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("No se ha encontrado el archivo");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        //NIO
+        Path path = Paths.get(".\\src\\EjercicioFichero2\\FicheroEjer2.txt");
+        try (Stream<String> lines = Files.lines(path)) {
+            StringBuilder info = new StringBuilder();
+            lines.forEach(a -> info.append(a).append(" "));
+            System.out.println(info);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
