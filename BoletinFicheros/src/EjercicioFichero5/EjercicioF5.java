@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class EjercicioF5 {
@@ -26,7 +29,7 @@ public class EjercicioF5 {
                     borrarFichero();
                     break;
                 //case 4:
-                //    mostrarFicherosEnCarpeta();
+                //    mostrarFicheros();
                 //    break;
                 case 5:
                     System.out.println("¡Hasta luego!");
@@ -89,5 +92,66 @@ public class EjercicioF5 {
         String nombre = MiEntradaSalida.leerCadena("Elija el nombre del fichero que quiere borrar");
         File ficheroABorrar = new File("./src/EjercicioFichero5/" + nombre);
 
+        if(!ficheroABorrar.exists()){
+            System.out.println("El nombre del fichero no existe");
+        } else {
+            if(ficheroABorrar.delete()) {
+                System.out.println("Se ha borrado el fichero " + nombre + "correctamente");
+            }else {
+                System.out.println("El fichero no ha podido ser borrado");
+            }
+        }
+    }
+
+    public static void mostrarFicheros(){
+        String nombre = MiEntradaSalida.leerCadena("Elija el nombre del directorio");
+        File directorio = new File("./src/Ejercicio5/" + nombre);
+
+        if (directorio.exists()){
+            if (directorio.isDirectory()){
+                File[] fichero = directorio.listFiles();
+                if (fichero.length > 0){
+                    for (File fich : fichero){
+                        System.out.println("Nombre fichero: " + fich.getName());
+                    }
+                }else{
+                    System.out.println("El directorio esta vacio");
+                }
+            }
+        }else {
+            System.out.println("El directorio no existe");
+        }
+    }
+
+    public static void mostrarFicheros2(){
+        String nombre = MiEntradaSalida.leerCadena("Elija el nombre del directorio");
+        File directorio = new File("./src/Ejercicio5/" + nombre);
+
+        if (directorio.exists()){
+            if (directorio.isDirectory()){
+                File[] ficheros = directorio.listFiles(File::isFile);
+                if (ficheros.length > 0){
+                    for (File fich : ficheros){
+                        System.out.println("Nombre fichero: " + fich.getName());
+                    }
+                }else{
+                    System.out.println("El directorio esta vacio");
+                }
+            }
+        }else {
+            System.out.println("El directorio no existe");
+        }
+    }
+
+    public static void mostrarFicheros3() {
+
+        String nombre = MiEntradaSalida.leerCadena("Elija el nombre del directorio");
+        Path path = Paths.get("./src/Ejercicio5/" + nombre);
+
+        if (Files.exists(path) && Files.isDirectory(path)){
+            Files.list(path).filter(Files::isRegularFile).forEach(System.out::println);
+        }else {
+            System.out.println("El directorio no existe");
+        }
     }
 }
