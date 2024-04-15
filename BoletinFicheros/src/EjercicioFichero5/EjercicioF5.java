@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class EjercicioF5 {
     public static void main(String[] args) {
@@ -28,9 +29,9 @@ public class EjercicioF5 {
                 case 3:
                     borrarFichero();
                     break;
-                //case 4:
-                //    mostrarFicheros();
-                //    break;
+                case 4:
+                    mostrarFicheros();
+                    break;
                 case 5:
                     System.out.println("¡Hasta luego!");
                     break;
@@ -143,13 +144,15 @@ public class EjercicioF5 {
         }
     }
 
-    public static void mostrarFicheros3() {
+    public static void mostrarFicheros3() throws IOException {
 
         String nombre = MiEntradaSalida.leerCadena("Elija el nombre del directorio");
         Path path = Paths.get("./src/Ejercicio5/" + nombre);
 
         if (Files.exists(path) && Files.isDirectory(path)){
-            Files.list(path).filter(Files::isRegularFile).forEach(System.out::println);
+            try(Stream<Path> f = Files.list(path)) {
+                f.filter(Files::isRegularFile).forEach(System.out::println);
+            }
         }else {
             System.out.println("El directorio no existe");
         }
