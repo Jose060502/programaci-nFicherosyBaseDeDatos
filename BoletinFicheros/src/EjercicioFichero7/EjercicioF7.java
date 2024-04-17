@@ -1,10 +1,10 @@
 package EjercicioFichero7;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Scanner;
 import java.util.stream.Stream;
 
 import static EjercicioFichero5.MiEntradaSalida.leerCadena;
@@ -115,61 +115,52 @@ public class EjercicioF7 {
     }
 
     public static void buscarArchivo() {
-        String nombreDirectorio = leerCadena("Ingrese el nombre del directorio:");
-        String nombreArchivo = leerCadena("Ingrese el nombre del archivo:");
-        File directorio = new File(nombreDirectorio);
+        String nombreArchivo = leerCadena("Ingrese el nombre del archivo a buscar: ");
+        File[] archivos = directorio.listFiles(((dir, name) -> name.equals(nombreArchivo)));
 
-        if (directorio.exists() && directorio.isDirectory()) {
-            buscarArchivoEnDirectorio(directorio, nombreArchivo);
-        } else {
-            System.out.println("El directorio no existe o no es válido.");
-        }
-    }
-
-    private static void buscarArchivoEnDirectorio(File directorio, String nombreArchivo) {
-        File[] archivos = directorio.listFiles();
-        if (archivos != null) {
-            for (File archivo : archivos) {
-                if (archivo.isFile() && archivo.getName().equalsIgnoreCase(nombreArchivo)) {
-                    System.out.println("Archivo encontrado: " + archivo.getAbsolutePath() + " - " + archivo.length() / 1024 + " KB");
-                    return;
-                }
-            }
-            // Si no se encuentra en este directorio, buscar en subdirectorios
-            for (File subDirectorio : archivos) {
-                if (subDirectorio.isDirectory()) {
-                    buscarArchivoEnDirectorio(subDirectorio, nombreArchivo);
-                }
+        for (File archivo : archivos) {
+            if (archivo.isDirectory()) {
+                System.out.println(archivo.getAbsolutePath() + " (directorio)");
+            } else {
+                System.out.println(archivo.getAbsolutePath() + " - " + archivo.length() / 1024 + " KB");
             }
         }
     }
 
     public static void buscarArchivoRecursivo() {
-        String nombreDirectorio = leerCadena("Ingrese el nombre del directorio:");
-        String nombreArchivo = leerCadena("Ingrese el nombre del archivo:");
-        File directorio = new File(nombreDirectorio);
+        String nombreArchivo = leerCadena("Ingrese el nombre del archivo a buscar: ");
+        Path dir = directorio.toPath();
 
-        if (directorio.exists() && directorio.isDirectory()) {
-            buscarArchivoRecursivamenteEnDirectorio(directorio, nombreArchivo);
-        } else {
-            System.out.println("El directorio no existe o no es válido.");
-        }
+        buscarArchivosRecusivamente(nombreArchivo, dir);
+
     }
 
-    private static void buscarArchivoRecursivamenteEnDirectorio(File directorio, String nombreArchivo) {
-        File[] archivos = directorio.listFiles();
-        if (archivos != null) {
-            for (File archivo : archivos) {
-                if (archivo.isFile() && archivo.getName().equalsIgnoreCase(nombreArchivo)) {
-                    System.out.println("Archivo encontrado: " + archivo.getAbsolutePath() + " - " + archivo.length() / 1024 + " KB");
+    public static void buscarArchivosRecusivamente(String nombre, Path directorio) {
+        try (Stream<Path> ficheros = Files.list(directorio)) {
+            ficheros.sorted((a, b) -> {
+                        if (Files.isRegularFile(a) && Files.isRegularFile(b)) {
+                            return -1;
+                        } else if (Files.isRegularFile(b) && Files.isRegularFile(a)) {
+                            return 1;
+                        } else {
+                            return 0;
                 }
-            }
-            // Buscar en subdirectorios recursivamente
-            for (File subDirectorio : archivos) {
-                if (subDirectorio.isDirectory()) {
-                    buscarArchivoRecursivamenteEnDirectorio(subDirectorio, nombreArchivo);
+                    })
+                    .forEach(a -> {
+                        if (Files.isDirectory(a)) {
+                            buscarArchivosRecusivamente(nombre, a);
+                        } else {
+                            if (a.endsWith(Paths.get(nombre))) {
+                                try {
+                                    System.out.println(a.toAbsolutePath() + " - " + Files.size(a) / 1024 + " KB");
+                                } catch (IOException e) {
+                                    System.out.println("Ocurrio un error al acceder al fichero");
+                                }
+                            }
                 }
-            }
+                    });
+        } catch (IOException e) {
+            System.out.println("Ocurrio un error al acceder al fichero");
         }
     }
 }
