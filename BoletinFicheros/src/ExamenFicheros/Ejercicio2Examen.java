@@ -20,9 +20,11 @@ public class Ejercicio2Examen {
 
         try{
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse("./src/ExamenFicheros/Ejercicio2.xml");
-            NodeList fechas = doc.getElementsByTagName("fecha_emision");
+            Document doc = db.parse("./BoletinFicheros/src/ExamenFicheros/Ejercicio2.xml");
+            Element raiz = doc.getDocumentElement();
 
+            //Apartado 1
+            NodeList fechas = raiz.getElementsByTagName("fecha_emision");
             for (int i = 0; i < fechas.getLength(); i++){
                 Element fecha = (Element) fechas.item(i);
                 int anho = Integer.parseInt(fecha.getTextContent().substring(fecha.getTextContent().length() - 4));
@@ -32,53 +34,69 @@ public class Ejercicio2Examen {
                     System.out.println(fecha.getTextContent());
                 }
             }
-
-            NodeList capitulos = doc.getElementsByTagName("capitulo");
+            //Apartado 2
+            NodeList capitulos = raiz.getElementsByTagName("capitulo");
             for (int i = 0; i < capitulos.getLength(); i++){
                 Element capitulo = (Element) capitulos.item(i);
 
-                String sinopsis = capitulo.getElementsByTagName("sinopsis").item(0).getTextContent();
+                Element sinopsis = (Element) capitulo.getElementsByTagName("sinopsis").item(0);
 
+                String[] sinopsisPalabras = sinopsis.getTextContent().split("\\s+");
+
+                if (sinopsisPalabras.length <= 30){
+                    raiz.removeChild(capitulo);
+                    i--;
+                }
+            }
+            hacerDoc(doc, "./BoletinFicheros/src/ExamenFicheros/Ejercicio2parte2.xml");
+
+            //Apartado 3
+            for (int i = 0; i < capitulos.getLength(); i++){
+                Element capitulo = (Element) capitulos.item(i);
+
+                Element sinopsis = (Element) capitulo.getElementsByTagName("sinopsis").item(0);
+
+                String textoSinopsis = sinopsis.getTextContent();
+                textoSinopsis = textoSinopsis.replaceAll("(Marge|Homer|Bart|Lisa|Maggie)", "**$1**");
+                sinopsis.setTextContent(textoSinopsis);
 
             }
+            hacerDoc(doc, "./BoletinFicheros/src/ExamenFicheros/Ejercicio2parte3.xml");
 
-            File f = new File("./src/ExamenFicheros/Ejercicio2parte2.xml");
-
-            // 2º Creamos una nueva instancia del transformador a través de la fábrica de
-            // transformadores.
-
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-
-            // 3º Establecemos algunas opciones de salida, como por ejemplo, la codificación
-            // de salida.
-
-            //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            // 4º Creamos el StreamResult, que intermediará entre el transformador y el
-            // archivo de destino.
-
-            StreamResult result = new StreamResult(f);
-
-            // 5º Creamos el DOMSource, que intermediará entre el transformador y el árbol
-            // DOM.
-
-            DOMSource source = new DOMSource(doc);
-
-            // 6º Realizamos la transformación.
-
-            transformer.transform(source, result);
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (SAXException e) {
             throw new RuntimeException(e);
-        } catch (TransformerConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (TransformerException e) {
-            throw new RuntimeException(e);
         }
+    }
+
+    private static void hacerDoc(Document doc, String rutaSalida) {
+
+        try {
+            // Declaramos un nuevo Transformer
+            Transformer t = TransformerFactory.newInstance().newTransformer();
+
+            // Normalizamos el documento
+            doc.normalizeDocument();
+
+            // Asignamos las propiedas de salida para el transformador
+            t.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+            t.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            // Declaramos el documento fuente
+            DOMSource fuente = new DOMSource(doc);
+
+            // Declaramos el flujo de salida
+            StreamResult resultado = new StreamResult(rutaSalida);
+
+            // Guardamos el documento cargado en memoria
+            t.transform(fuente, resultado);
+
+        } catch (TransformerException | TransformerFactoryConfigurationError e) {
+            e.printStackTrace();
+        }
+
     }
 }
