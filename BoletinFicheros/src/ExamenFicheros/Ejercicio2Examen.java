@@ -11,8 +11,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Ejercicio2Examen {
     public static void main(String[] args) {
@@ -20,7 +21,7 @@ public class Ejercicio2Examen {
 
         try{
             DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse("./BoletinFicheros/src/ExamenFicheros/Ejercicio2.xml");
+            Document doc = db.parse("./src/ExamenFicheros/Ejercicio2.xml");
             Element raiz = doc.getDocumentElement();
 
             //Apartado 1
@@ -36,19 +37,31 @@ public class Ejercicio2Examen {
             }
             //Apartado 2
             NodeList capitulos = raiz.getElementsByTagName("capitulo");
-            for (int i = 0; i < capitulos.getLength(); i++){
+            /*for (int i = 0; i < capitulos.getLength(); i++){
                 Element capitulo = (Element) capitulos.item(i);
 
                 Element sinopsis = (Element) capitulo.getElementsByTagName("sinopsis").item(0);
 
-                String[] sinopsisPalabras = sinopsis.getTextContent().split("\\s+");
+                String[] sinopsisContarPalabras = sinopsis.getTextContent().split("\\s+");
 
-                if (sinopsisPalabras.length <= 30){
+                if (sinopsisContarPalabras.length <= 30){
+                    raiz.removeChild(capitulo);
+                    i--;
+                }
+            }*/
+            Pattern p = Pattern.compile("\\p{L}+");
+            for (int i = 0; i < capitulos.getLength(); i++){
+                Element capitulo = (Element) capitulos.item(i);
+
+                Element sinopsis = (Element) capitulo.getElementsByTagName("sinopsis").item(0);
+                Matcher m = p.matcher(sinopsis.getTextContent());
+
+                if(m.results().count() <= 30){
                     raiz.removeChild(capitulo);
                     i--;
                 }
             }
-            hacerDoc(doc, "./BoletinFicheros/src/ExamenFicheros/Ejercicio2parte2.xml");
+            crearDocumento(doc, "./src/ExamenFicheros/Ejercicio2parte2.xml");
 
             //Apartado 3
             for (int i = 0; i < capitulos.getLength(); i++){
@@ -61,7 +74,7 @@ public class Ejercicio2Examen {
                 sinopsis.setTextContent(textoSinopsis);
 
             }
-            hacerDoc(doc, "./BoletinFicheros/src/ExamenFicheros/Ejercicio2parte3.xml");
+            crearDocumento(doc, "./src/ExamenFicheros/Ejercicio2parte3.xml");
 
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e);
@@ -72,7 +85,7 @@ public class Ejercicio2Examen {
         }
     }
 
-    private static void hacerDoc(Document doc, String rutaSalida) {
+    private static void crearDocumento(Document doc, String rutaSalida) {
 
         try {
             // Declaramos un nuevo Transformer

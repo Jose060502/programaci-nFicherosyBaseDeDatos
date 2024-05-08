@@ -1,26 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <simpsons>
         
-    <capitulo episodio="1" temporada="1">
-                
-        <nombre>Especial de Navidad de los Simpson</nombre>
-                
-        <sinopsis>Los Simpson deciden adoptar un perro callejero para Navidad, al que llaman Pequeño Ayudante de Santa, pero pronto se dan cuenta de que mantenerlo no es tan fácil como pensaban.</sinopsis>
-                
-        <fecha_emision>17 de diciembre de 1989</fecha_emision>
-            
-    </capitulo>
-        
-    <capitulo episodio="1" temporada="2">
-                
-        <nombre>Bart, el genio</nombre>
-                
-        <sinopsis>Tras hacer trampa en un test de inteligencia, **Bart** es enviado a una escuela para superdotados. Mientras tanto, **Homer** recibe un ascenso en la planta nuclear.</sinopsis>
-                
-        <fecha_emision>11 de octubre de 1990</fecha_emision>
-            
-    </capitulo>
-        
+    
+    
     <capitulo episodio="12" temporada="3">
                 
         <nombre>El último deseo de Selma</nombre>
