@@ -1,7 +1,6 @@
 package Ejercicio1Repaso;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Tienda {
@@ -12,6 +11,14 @@ public class Tienda {
 
     public List<Cliente> getListaClientes() {
         return listaClientes;
+    }
+
+    public List<Mascota> getCatalogoMascotas() {
+        return catalogoMascotas;
+    }
+
+    public List<Mascota> getMascotasDisponibles() {
+        return catalogoMascotas.stream().filter(Mascota::isDisponible).toList();
     }
 
     public Tienda(String nombre) {
@@ -34,6 +41,17 @@ public class Tienda {
     public void comprarMascota(Cliente cliente , Mascota mascota){
         Compra compra = new Compra(cliente, mascota);
         listaCompra.add(compra);
+        mascota.setDisponible(false);
     }
 
+    public List<Compra> listarComprasCliente(Cliente cliente) {
+        return listaCompra.stream().filter(compra -> {
+            return compra.getCliente().equals(cliente) && compra.getFechaCompra() == null;
+        }).toList();
+    }
+
+    public void verificarDevolucion(Compra compra){
+        compra.marcarDevolucion();
+        compra.getMascota().setDisponible(true);
+    }
 }

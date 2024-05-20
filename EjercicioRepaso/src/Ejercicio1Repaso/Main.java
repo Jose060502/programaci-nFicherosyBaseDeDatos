@@ -5,8 +5,7 @@ import java.util.List;
 public class Main {
     private static Tienda tienda = new Tienda("AnimalCrossingShop");
     public static void main(String[] args) {
-        addCliente();
-        addMascota();
+
     }
 
     public static void addCliente(){
@@ -24,6 +23,16 @@ public class Main {
 
     public static void addCompra(){
         List<Cliente> clientes = tienda.getListaClientes();
-        Cliente c = MiEntradaSalida.leerOpciones("Selecciona el cliente", clientes.stream().map());
+        List<Mascota> mascotas = tienda.getMascotasDisponibles();
+        Cliente c = MiEntradaSalida.leerEnum("Selecciona el cliente", clientes.toArray(Cliente[]::new));
+        Mascota m = MiEntradaSalida.leerEnum("Seleccione la mascota", mascotas.toArray(Mascota[]::new));
+        tienda.comprarMascota(c, m);
+    }
+
+    public static void devolverMascota(){
+        List<Cliente> clientes = tienda.getListaClientes();
+        Cliente c = MiEntradaSalida.leerEnum("Selecciona el cliente", clientes.toArray(Cliente[]::new));
+        List<Compra> compras = tienda.listarComprasCliente(c);
+        Compra compra = MiEntradaSalida.leerEnum("Selecciona la compra", compras.toArray(Compra[]::new));
     }
 }
